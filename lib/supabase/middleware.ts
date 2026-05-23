@@ -23,6 +23,16 @@ export async function updateSession(request: NextRequest) {
     return response;
   }
 
+  // Safety net: Supabase email-confirmation links can land on the root ("/?code=...")
+  // instead of /auth/callback when the callback URL isn't in the redirect allowlist.
+  // Route any stray auth code through the callback handler so the session is created.
+  const authCode = request.nextUrl.searchParams.get("code");
+  if (authCode && request.nextUrl.pathname !== "/auth/callback") {
+    const cb = request.nextUrl.clone();
+    cb.pathname = "/auth/callback";
+    return NextResponse.redirect(cb);
+  }
+
   const supabase = createServerClient(
     url,
     anonKey,
