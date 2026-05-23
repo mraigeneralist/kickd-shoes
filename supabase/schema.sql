@@ -9,9 +9,21 @@
 create extension if not exists pgcrypto;
 
 -- ---------------------------------------------------------------------------
+-- profiles  (1:1 with auth.users)
+-- ---------------------------------------------------------------------------
+create table if not exists public.profiles (
+  id          uuid primary key references auth.users (id) on delete cascade,
+  full_name   text,
+  phone       text,
+  is_admin    boolean not null default false,
+  created_at  timestamptz not null default now()
+);
+
+-- ---------------------------------------------------------------------------
 -- Helper: is_admin(uid)
 -- SECURITY DEFINER so RLS policies can check admin status without recursing
--- into the profiles table's own policies.
+-- into the profiles table's own policies. Defined AFTER profiles so the
+-- SQL function body can resolve the table reference at creation time.
 -- ---------------------------------------------------------------------------
 create or replace function public.is_admin(uid uuid)
 returns boolean
@@ -22,17 +34,6 @@ set search_path = public
 as $$
   select coalesce((select is_admin from public.profiles where id = uid), false);
 $$;
-
--- ---------------------------------------------------------------------------
--- profiles  (1:1 with auth.users)
--- ---------------------------------------------------------------------------
-create table if not exists public.profiles (
-  id          uuid primary key references auth.users (id) on delete cascade,
-  full_name   text,
-  phone       text,
-  is_admin    boolean not null default false,
-  created_at  timestamptz not null default now()
-);
 
 -- Auto-create a profile row whenever a new auth user signs up.
 create or replace function public.handle_new_user()
