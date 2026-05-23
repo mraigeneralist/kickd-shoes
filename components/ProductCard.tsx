@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
 import { formatINR } from "@/lib/utils";
 import type { ProductWithCategory } from "@/lib/types";
 
@@ -46,8 +47,14 @@ export default function ProductCard({
           <span className="text-lg font-bold text-ink">
             {formatINR(product.price)}
           </span>
-          <span className="text-sm font-medium text-brand opacity-0 transition group-hover:opacity-100">
-            View →
+          <span
+            aria-hidden
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-ink/15 text-ink transition-colors duration-300 group-hover:border-brand group-hover:bg-brand group-hover:text-white"
+          >
+            <ArrowUpRight
+              size={18}
+              className="transition-transform duration-300 group-hover:rotate-45"
+            />
           </span>
         </div>
       </div>
