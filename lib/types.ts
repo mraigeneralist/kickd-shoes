@@ -42,6 +42,11 @@ export type Profile = {
   full_name: string | null;
   phone: string | null;
   is_admin: boolean;
+  shipping_line1: string | null;
+  shipping_line2: string | null;
+  shipping_city: string | null;
+  shipping_state: string | null;
+  shipping_pincode: string | null;
   created_at: string;
 };
 

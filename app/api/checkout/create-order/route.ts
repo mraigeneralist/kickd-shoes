@@ -150,6 +150,24 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Could not create order" }, { status: 500 });
   }
 
+  // Save this address on the user's profile so it prefills next time.
+  // Non-fatal: a failure here must not block a paid order.
+  const { error: profErr } = await admin
+    .from("profiles")
+    .update({
+      full_name: shipping.name,
+      phone: shipping.phone,
+      shipping_line1: shipping.line1,
+      shipping_line2: shipping.line2 || null,
+      shipping_city: shipping.city,
+      shipping_state: shipping.state,
+      shipping_pincode: shipping.pincode,
+    })
+    .eq("id", user.id);
+  if (profErr) {
+    console.error("Saving address to profile failed (non-fatal):", profErr);
+  }
+
   return NextResponse.json({
     orderId: order.id,
     razorpayOrderId: rzpOrder.id,

@@ -14,7 +14,9 @@ export default async function CheckoutPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("full_name, phone")
+    .select(
+      "full_name, phone, shipping_line1, shipping_line2, shipping_city, shipping_state, shipping_pincode"
+    )
     .eq("id", user.id)
     .single();
 
@@ -23,6 +25,13 @@ export default async function CheckoutPage() {
       userEmail={user.email ?? ""}
       defaultName={profile?.full_name ?? ""}
       defaultPhone={profile?.phone ?? ""}
+      defaultAddress={{
+        line1: profile?.shipping_line1 ?? "",
+        line2: profile?.shipping_line2 ?? "",
+        city: profile?.shipping_city ?? "",
+        state: profile?.shipping_state ?? "",
+        pincode: profile?.shipping_pincode ?? "",
+      }}
     />
   );
 }

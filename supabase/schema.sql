@@ -19,6 +19,15 @@ create table if not exists public.profiles (
   created_at  timestamptz not null default now()
 );
 
+-- Saved shipping address (one per user). Prefilled at checkout and updated
+-- whenever a user places an order, so they don't re-enter it every time.
+-- alter ... if not exists keeps this safe to run on an existing profiles table.
+alter table public.profiles add column if not exists shipping_line1   text;
+alter table public.profiles add column if not exists shipping_line2   text;
+alter table public.profiles add column if not exists shipping_city    text;
+alter table public.profiles add column if not exists shipping_state   text;
+alter table public.profiles add column if not exists shipping_pincode text;
+
 -- ---------------------------------------------------------------------------
 -- Helper: is_admin(uid)
 -- SECURITY DEFINER so RLS policies can check admin status without recursing

@@ -25,14 +25,24 @@ function loadRazorpayScript(): Promise<boolean> {
   });
 }
 
+type Address = {
+  line1: string;
+  line2: string;
+  city: string;
+  state: string;
+  pincode: string;
+};
+
 export default function CheckoutForm({
   userEmail,
   defaultName,
   defaultPhone,
+  defaultAddress,
 }: {
   userEmail: string;
   defaultName: string;
   defaultPhone: string;
+  defaultAddress?: Address;
 }) {
   const router = useRouter();
   const items = useCart((s) => s.items);
@@ -42,11 +52,11 @@ export default function CheckoutForm({
   const [form, setForm] = useState({
     name: defaultName,
     phone: defaultPhone,
-    line1: "",
-    line2: "",
-    city: "",
-    state: "",
-    pincode: "",
+    line1: defaultAddress?.line1 ?? "",
+    line2: defaultAddress?.line2 ?? "",
+    city: defaultAddress?.city ?? "",
+    state: defaultAddress?.state ?? "",
+    pincode: defaultAddress?.pincode ?? "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -146,7 +156,11 @@ export default function CheckoutForm({
         {/* Shipping form */}
         <form onSubmit={handlePay} className="lg:col-span-2">
           <div className="card p-6">
-            <h2 className="mb-5 text-lg font-bold">Shipping address</h2>
+            <h2 className="text-lg font-bold">Shipping address</h2>
+            <p className="mb-5 mt-1 text-xs text-ink-subtle">
+              We&apos;ll save this address to your account so you won&apos;t have to
+              re-enter it next time.
+            </p>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="label">Full name</label>
