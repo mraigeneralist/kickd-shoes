@@ -10,6 +10,8 @@ type CartState = {
   add: (item: CartItem) => void;
   remove: (productId: string, size: string) => void;
   setQuantity: (productId: string, size: string, quantity: number) => void;
+  // Replace the entire cart (e.g. adopt the DB cart as the source of truth).
+  setItems: (items: CartItem[]) => void;
   clear: () => void;
   openCart: () => void;
   closeCart: () => void;
@@ -59,6 +61,8 @@ export const useCart = create<CartState>()(
             )
             .filter((i) => i.quantity > 0),
         })),
+
+      setItems: (items) => set({ items }),
 
       clear: () => set({ items: [] }),
       openCart: () => set({ isOpen: true }),
